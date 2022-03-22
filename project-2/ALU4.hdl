@@ -1,0 +1,49 @@
+
+CHIP ALU4{
+    IN  
+        x[16], y[16], p[16], q[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute out = x + y (if 1) or x & y (if 0)
+        no, // negate the out output?
+        selleft[2],
+        /*
+        0 0 -> x op y
+        0 1 -> x op p
+        1 0 -> x op q
+        1 1 -> enable right ALU
+        */
+        selright[2];
+        /*
+        0 0 -> y op q
+        0 1 -> p op q
+        1 0 -> y op p
+        1 1 -> useless op (not to be used)
+        */
+    OUT 
+        out[16], // 16-bit output
+        zr, // 1 if (out == 0), 0 otherwise
+        ng; // 1 if (out < 0),  0 otherwise
+
+    PARTS:
+    Mux16(a=x, b=false, sel=rightenabled, out=xmuxout);
+    Mux4Way16(a=y, b=p, c=q, d=false, sel=selleft, out=ymuxout);
+
+    And(a=selleft[0], b=selleft[1], out=rightenabled);
+
+    Not(in=selright[0], out=notselright0);
+    Mux16(a=p, b=y, sel=notselright0, out=pmuxout);
+    Mux16(a=q, b=p, sel=selright[1], out=qmuxout);
+
+    // Left ALU
+    ALU(x=xmuxout, y=ymuxout, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=out0, zr=zr0, ng=ng0);
+
+    // Right ALU
+    ALU(x=pmuxout, y=qmuxout, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=out1, zr=zr1, ng=ng1);
+
+    Mux16(a=out0, b=out1, sel=rightenabled, out=out);
+    Mux(a=zr0, b=zr1, sel=rightenabled, out=zr);
+    Mux(a=ng0, b=ng1, sel=rightenabled, out=ng);
+}
