@@ -28,22 +28,22 @@ CHIP ALU4{
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    Mux16(a=x, b=false, sel=rightenabled, out=xmuxout);
-    Mux4Way16(a=y, b=p, c=q, d=false, sel=selleft, out=ymuxout);
-
-    And(a=selleft[0], b=selleft[1], out=rightenabled);
+    Mux16(a=x, b=false, sel=enableselectright, out=outxmux);
+    Mux4Way16(a=y, b=p, c=q, d=false, sel=selleft, out=outymux);
 
     Not(in=selright[0], out=notselright0);
-    Mux16(a=p, b=y, sel=notselright0, out=pmuxout);
-    Mux16(a=q, b=p, sel=selright[1], out=qmuxout);
+    Mux16(a=p, b=y, sel=notselright0, out=outpmux);
+    Mux16(a=q, b=p, sel=selright[1], out=outqmux);
+
+    And(a=selleft[0], b=selleft[1], out=enableselectright);
 
     // Left ALU
-    ALU(x=xmuxout, y=ymuxout, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=out0, zr=zr0, ng=ng0);
+    ALU(x=xmuxout, y=outymux, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=out0, zr=zr0, ng=ng0);
 
     // Right ALU
-    ALU(x=pmuxout, y=qmuxout, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=out1, zr=zr1, ng=ng1);
+    ALU(x=outpmux, y=outqmux, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, out=out1, zr=zr1, ng=ng1);
 
-    Mux16(a=out0, b=out1, sel=rightenabled, out=out);
-    Mux(a=zr0, b=zr1, sel=rightenabled, out=zr);
-    Mux(a=ng0, b=ng1, sel=rightenabled, out=ng);
+    Mux16(a=out0, b=out1, sel=enableselectright, out=out);
+    Mux(a=zr0, b=zr1, sel=enableselectright, out=zr);
+    Mux(a=ng0, b=ng1, sel=enableselectright, out=ng);
 }

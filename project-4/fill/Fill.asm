@@ -23,10 +23,10 @@ D;JNE
 D;JEQ
 
 (BLACK)
-@counter   
+@counterblack  
 M=-1
-(LOOP)
-@counter
+(LOOPBLACK)
+@counterblack
 M=M+1
 D=M
 @SCREEN
@@ -34,7 +34,7 @@ A=A+D
 M=-1
 @8191
 D=D-A
-@LOOP
+@LOOPBLACK
 D;JNE    
 @BEGIN
 0;JMP
