@@ -43,4 +43,3 @@ if __name__ == "__main__":
     for path in ["add/Add.asm", "max/MaxL.asm", "pong/PongL.asm", "rect/RectL.asm"]:
         assemb_nosymb = AssemblerNoSymb(path)
         assemb_nosymb.createOutput()
-        print("hola")
