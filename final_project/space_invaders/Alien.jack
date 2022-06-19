@@ -1,0 +1,156 @@
+class Alien {
+    field int x, y, size;
+    field int direction;
+    field boolean is_alive;
+
+    constructor Alien new (int Ax, int Ay, int Asize, int Adirection) {
+        let x = Ax;
+        let y = Ay;
+        let size = Asize;
+        let direction = Adirection;
+        let is_alive = true;
+        do show();
+        return this;
+    }
+
+    method int get_y_pos() {
+        return y;
+    }
+
+    method int get_x_pos() {
+        return x;
+    }
+
+    method void set_x(int Ax) {
+        let x = Ax;
+        return;
+    }
+
+    method void set_y(int Ay) {
+        let y = Ay;
+        return;
+    }
+
+    method int get_is_alive() {
+        return is_alive;
+    }
+
+    method void set_is_alive(boolean A_is_alive) {
+        let is_alive = A_is_alive;
+        return;
+    }
+
+    method void hide(int Ax, int Ay) {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(Ax, Ay, Ax + size, Ay + size);
+        return;
+    }
+
+    method void draw() {
+        do Screen.drawRectangle(x, y, x + size, y + size);
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+    
+    method void show() {
+        do Screen.setColor(true);
+	    do draw();
+        return;
+    }
+
+    method boolean get_direction () {
+        return direction;
+    }
+
+    method void moveLeft() {
+        if (x > 15) {
+            do Screen.setColor(false);
+            do Screen.drawRectangle((x + size) - 0.1, y, x + size, y + size);
+            do Screen.drawCircle(x + 15, y + 15, 10);
+            let x = x - 1;
+            do set_x(x);
+            do set_y(y);
+            do Screen.setColor(true);
+            do Screen.drawRectangle(x, y, x + 0.1, y + size);
+            do Screen.setColor(true);
+            do Screen.drawCircle(x + 15, y + 15, 10);
+        }else {
+            let direction = 0;
+        }
+        return;
+    }
+
+    method void moveLeft_boss() {
+        if (x > 15) {
+            do Screen.setColor(false);
+            do Screen.drawRectangle((x + size) - 0.1, y, x + size, y + size);
+            do Screen.drawCircle(x + 15, y + 20, 7);
+            let x = x - 1;
+            do set_x(x);
+            do set_y(y);
+            do Screen.setColor(true);
+            do Screen.drawRectangle(x, y, x + 0.1, y + size);
+            do Screen.setColor(true);
+            do Screen.drawCircle(x + 15, y + 15, 10);
+        }else {
+            let direction = 0;
+        }
+        return;
+    }
+
+    method void moveRigth_boss () {
+        if ((x + size) < 510) {
+            do Screen.setColor(false);
+            do Screen.drawRectangle(x, y, x + 0.1, y + size);
+            do Screen.drawCircle(x + 15, y + 20, 7);
+            let x = x + 1;
+            do set_x(x);
+            do set_y(y);
+            do Sys.wait(20);
+            do Screen.setColor(true);
+            do Screen.drawRectangle((x + size) - 0.1, y, x + size, y + size);
+            do Screen.drawCircle(x + 15, y + 15, 10);
+        }else {
+            let direction = 1;
+        }
+        return;
+    }
+
+    method void moveRigth () {
+        if ((x + size) < 510) {
+            do Screen.setColor(false);
+            do Screen.drawRectangle(x, y, x + 0.1, y + size);
+            do Screen.drawCircle(x + 15, y + 15, 10);
+            let x = x + 1;
+            do set_x(x);
+            do set_y(y);
+            do Screen.setColor(true);
+            do Screen.drawRectangle((x + size) - 0.1, y, x + size, y + size);
+            do Screen.drawCircle(x + 15, y + 15, 10);
+        }else {
+            let direction = 1;
+        }
+        return;
+    }
+
+
+    method void move() {
+        var int directionAlien;
+        let directionAlien = get_direction();
+
+        if (directionAlien = 0) {do moveRigth();} else {do moveLeft();}
+        return;
+    }
+
+    method void move_boss() {
+        var int directionAlien;
+        let directionAlien = get_direction();
+
+        if (directionAlien = 0) {do moveRigth_boss();} else {do moveLeft_boss();}
+        return;
+    }
+}

@@ -1,0 +1,83 @@
+class Bullet {
+    field int x, y;
+    field int width, height;
+    field boolean is_bullet_visible;
+    constructor Bullet new(int Ax, int Ay, int Awidth, int Aheight, boolean A_is_bullet_visible) {
+        let x = Ax;
+        let y = Ay;
+        let width = Awidth;
+        let height = Aheight;
+        let is_bullet_visible = A_is_bullet_visible;
+        return this;
+    }
+
+    method int getVisibility() {
+        return is_bullet_visible;
+    }
+
+    method void setVisibility(boolean A_is_bullet_visible) {
+        let is_bullet_visible = A_is_bullet_visible;
+        return;
+    }
+
+    method void set_x(int Ax) {
+        let x = Ax;
+        return;
+    }
+
+    method void set_y(int Ay) {
+        let y = Ay;
+        return;
+    }
+    
+    method void hide(int Ax, int Ay) {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(Ax, Ay, Ax + 10, Ay + 10);
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void show() {
+        do Screen.setColor(true);
+	    do draw();
+        return;
+    }
+
+    method void draw() {
+        do Screen.drawRectangle(x, y, x + width, y + height);
+        return;
+    }
+
+    method int get_y_pos() {
+        return y;
+    }
+
+    method int get_x_pos() {
+        return x;
+    }
+
+    method void move (int Ay) {
+        var int y_pos;
+        var int x_pos;
+
+        if (Ay > 10) {
+            do set_y(Ay - 10);
+            do show();
+            do Sys.wait(10);
+            let y_pos = get_y_pos();
+            let x_pos = get_x_pos();
+            do hide(x_pos, y_pos);
+        }else {
+            let y_pos = get_y_pos();
+            let x_pos = get_x_pos();
+            do hide(x_pos, y_pos);
+            do setVisibility(false);
+            do set_y(235);
+        }
+        return;
+    }
+}

@@ -1,0 +1,147 @@
+class Game {
+    field Player player;
+    field Bullet bullet;
+    field Alien alien_boss;
+    field Alien alien0;
+    field Alien alien1;
+    field int n_alien;
+    field int alien_width;
+    field boolean exit;
+
+    constructor Game new() {
+        do Screen.clearScreen();
+        let exit = false;
+
+        let alien_width = 30;
+        let player = Player.new(230,245,50,7);
+        let bullet = Bullet.new(230,235,5,7,false);
+        let alien_boss = Alien.new(230,20,alien_width,0);
+        let alien0 = Alien.new(230,70,alien_width,1);
+        let alien1 = Alien.new(300,120,alien_width,0);
+        let n_alien = 3;
+
+        return this;
+    }
+
+    method void dispose() {
+        do bullet.dispose();
+        do player.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void check_collision() {
+        var int xpos_bullet;
+        var int ypos_bullet;
+        var int xpos_alien;
+        var int ypos_alien;
+        var int xpos_alien0;
+        var int ypos_alien0;
+        var int xpos_alien1;
+        var int ypos_alien1;
+
+        let xpos_bullet = bullet.get_x_pos();
+        let ypos_bullet = bullet.get_y_pos();
+
+        let xpos_alien = alien_boss.get_x_pos();
+        let ypos_alien = alien_boss.get_y_pos();
+
+        let xpos_alien0 = alien0.get_x_pos();
+        let ypos_alien0 = alien0.get_y_pos();
+
+        let xpos_alien1 = alien1.get_x_pos();
+        let ypos_alien1 = alien1.get_y_pos();
+
+        if(alien_boss.get_is_alive()) {
+            if(((xpos_bullet = xpos_alien) | ((xpos_bullet < ((xpos_alien + alien_width) + 5)) & (xpos_bullet > (xpos_alien - 5)))) & 
+            ((ypos_bullet = ypos_alien) | ((ypos_bullet < ((ypos_alien + alien_width) + 5)) & (ypos_bullet > (ypos_alien - 5)))))
+            {
+                let n_alien = n_alien - 1;
+                do alien_boss.set_is_alive(false);
+                do alien_boss.hide(xpos_alien, ypos_alien);
+                do alien_boss.dispose();
+            }
+        }
+
+                
+        if(alien0.get_is_alive()) {
+            if(((xpos_bullet = xpos_alien0) | ((xpos_bullet < ((xpos_alien0 + alien_width) + 5)) & (xpos_bullet > (xpos_alien0 - 5)))) & 
+            ((ypos_bullet = ypos_alien0) | ((ypos_bullet < ((ypos_alien0 + alien_width) + 5)) & (ypos_bullet > (ypos_alien0 - 5)))))
+            {
+                let n_alien = n_alien - 1;
+                do alien0.set_is_alive(false);
+                do alien0.hide(xpos_alien0, ypos_alien0);
+                do alien0.dispose();
+            }
+        }
+
+        if(alien1.get_is_alive()) {
+            if(((xpos_bullet = xpos_alien1) | ((xpos_bullet < ((xpos_alien1 + alien_width) + 5)) & (xpos_bullet > (xpos_alien1 - 5)))) & 
+            ((ypos_bullet = ypos_alien1) | ((ypos_bullet < ((ypos_alien1 + alien_width) + 5)) & (ypos_bullet > (ypos_alien1 - 5)))))
+            {
+                let n_alien = n_alien - 1;
+                do alien1.set_is_alive(false);
+                do alien1.hide(xpos_alien1, ypos_alien1);
+                do alien1.dispose();
+            }
+        }
+        return;
+    }
+
+    method void run() {
+        var char key;
+        var int xpos_player;
+        var int ypos_bullet;
+        var boolean bullet_visible;
+        while (~exit) {
+            let key = Keyboard.keyPressed();
+            let bullet_visible = bullet.getVisibility();
+
+            if (alien_boss.get_is_alive()) {
+                do alien_boss.move_boss();
+            }
+
+            if (alien0.get_is_alive()) {
+                do alien0.move();
+            }
+
+            if (alien1.get_is_alive()) {
+                do alien1.move();
+            }
+            
+            if ((key = 87) | (bullet_visible)) {
+
+                if (~bullet_visible) {
+                    let xpos_player = player.get_x();
+                    do bullet.set_x(xpos_player + 25);
+
+                    do bullet.setVisibility(true);
+                }
+                
+                let ypos_bullet = bullet.get_y_pos();
+                do bullet.move(ypos_bullet);
+                do check_collision();
+            }
+
+            if (key = 65){
+                do player.setDirection(1);
+            }else {
+                if (key = 68) {
+                    do player.setDirection(2);
+                }else {
+                    do player.setDirection(0);
+                }
+            }
+            do player.move();
+
+            if (n_alien = 0) {
+                do Output.moveCursor(12, 20);
+                do Screen.clearScreen();
+                do Output.printString("Felicidades, has ganado.");
+                do Sys.wait(2000);
+                return;
+            }
+        }
+        return;
+    }
+}
